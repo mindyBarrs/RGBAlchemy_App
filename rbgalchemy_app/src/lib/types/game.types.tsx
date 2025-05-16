@@ -26,9 +26,12 @@ export interface GameStore {
 	closestIndex: { rowId: number; colId: number };
 	delta: number;
 	tileMap: Map<string, number[]>;
+	// sourceMap: Map<string, number[]>;
+
 	setClosestIndex: (rowId: number, colId: number) => void;
 	setDelta: (value: number) => void;
 	setGameConfig: (config: GameResponse) => void;
+	// setSourceMap: (key: string, value: number[]) => void;
 	getSourceColor: (
 		rowId: number,
 		colId: number,
@@ -36,8 +39,8 @@ export interface GameStore {
 	) => number[];
 	getTileColor: (
 		rowId: number,
-		colId: number,
-		tileMap: Map<string, number[]>
+		colId: number
+		// tileMap: Map<string, number[]>
 	) => number[];
 	setTileMap: (key: string, value: number[]) => void;
 }

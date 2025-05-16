@@ -63,11 +63,7 @@ export const GameBoard = ({
 			return;
 		}
 		const newDelta = calculateDelta(targetColor, tileColor);
-		let closestColor = getTileColor(
-			closestIndex.rowId,
-			closestIndex.colId,
-			tileMap
-		);
+		let closestColor = getTileColor(closestIndex.rowId, closestIndex.colId);
 		if (closestColor) {
 			const oldDelta = calculateDelta(targetColor, closestColor);
 			if (newDelta < oldDelta) {
@@ -92,7 +88,7 @@ export const GameBoard = ({
 					key={"tile-" + rowId + "-" + i}
 					rowId={rowId}
 					colId={i}
-					color={getTileColor(rowId, i, tileMap)}
+					color={getTileColor(rowId, i)}
 					isDraggable={allowTileDrop}
 					isClosest={closestIndex.rowId === rowId && closestIndex.colId === i}
 				/>
