@@ -37,10 +37,6 @@ export interface GameStore {
 		colId: number,
 		sourceMap: Map<string, number[]>
 	) => number[];
-	getTileColor: (
-		rowId: number,
-		colId: number
-		// tileMap: Map<string, number[]>
-	) => number[];
+	getTileColor: (rowId: number, colId: number) => number[];
 	setTileMap: (key: string, value: number[]) => void;
 }

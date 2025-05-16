@@ -70,11 +70,7 @@ export const useGameStore = create<GameStore>()(
 		// 	});
 		// },
 
-		getTileColor: (
-			rowId: number,
-			colId: number
-			// tileMap: Map<string, number[]>
-		) => {
+		getTileColor: (rowId: number, colId: number) => {
 			let mapKey = getKey(rowId, colId);
 			const state: GameStore = useGameStore.getState();
 			const color = state.tileMap.get(mapKey);
