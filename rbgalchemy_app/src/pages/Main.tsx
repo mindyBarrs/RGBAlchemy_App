@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { InfoPanel } from "../components/InfoPanel/InforPanel";
 
@@ -8,6 +8,12 @@ import { GameBoard } from "../components/GameBoard/GameBoard";
 
 export const Main = () => {
 	const setGameConfig = useGameStore((state) => state.setGameConfig);
+	const { gameConfig } = useGameStore((state) => state);
+
+	const [moveCount, setMoveCount] = useState<number>(0);
+	const [openDialog, setOpenDialog] = useState<boolean>(false);
+	const [reloadGrid, setReloadGrid] = useState<boolean>(false);
+	const [win, setWin] = useState<boolean>(false);
 
 	useEffect(() => {
 		// Fetch game configuration from API
@@ -24,6 +30,16 @@ export const Main = () => {
 		fetchGameConfig();
 	}, [setGameConfig]);
 
+	const handleMovePlus = () => {
+		setMoveCount((moveCount: number) => moveCount + 1);
+	};
+
+	useEffect(() => {
+		if (gameConfig.maxMoves - moveCount === 0) {
+			setOpenDialog(true);
+		}
+	}, [moveCount]);
+
 	return (
 		<div>
 			<h1>RGB Alchemy Game</h1>
@@ -31,7 +47,16 @@ export const Main = () => {
 			<div>
 				<InfoPanel />
 
-				<GameBoard />
+				<GameBoard
+					gridHeight={gameConfig.gameBoardSize.height}
+					gridWidth={gameConfig.gameBoardSize.width}
+					targetColor={gameConfig.targetColor}
+					moveCount={moveCount}
+					reload={false}
+					moveMade={handleMovePlus}
+					onMove={() => console.log("Move made")}
+					onGameEnd={() => console.log("Game ended")}
+				/>
 			</div>
 		</div>
 	);

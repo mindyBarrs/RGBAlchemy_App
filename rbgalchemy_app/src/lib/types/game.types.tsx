@@ -1,15 +1,19 @@
+import { SourceProps } from "./component.types";
+
+import { RGB } from "./utils.types";
+
 export interface GameResponse {
 	userId: string;
 	maxMoves: number;
 	width: number;
 	height: number;
-	target: RGB;
+	target: number[];
 }
 
 export interface GameConfig {
 	userId: string;
 	maxMoves: number;
-	targetColor: RGB;
+	targetColor: number[];
 	gameBoardSize: {
 		width: number;
 		height: number;
@@ -18,29 +22,24 @@ export interface GameConfig {
 
 export interface GameStore {
 	gameConfig: GameConfig;
-	tiles: RGB[][];
-	sources: Source[];
+	tiles: number[][];
+	sources: SourceProps[];
 	movesLeft: number;
-	bestColor: RGB | null;
+	bestColor: number[];
 	bestDelta: number;
-	setSourceColor: (index: number, color: RGB) => void;
+	sourceMap: Map<string, number>;
+	tileMap: Map<string, number>;
+	closestIndex: { rowId: number; colId: number };
+	delta: number;
+	setClosestIndex: (
+		rowId: number,
+		colId: number,
+		tileColor: number[],
+		targetColor: number[]
+	) => void;
+	setDelta: (value: number) => void;
 	setGameConfig: (config: GameResponse) => void;
-	mixColorAt: (x: number, y: number, sourceIndex: number) => void;
-	generateSources: () => void;
-	// resetGame: () => void;
-}
-
-export interface RGB {
-	r: number;
-	g: number;
-	b: number;
-}
-
-type SourcePosition = "top" | "bottom" | "left" | "right";
-
-export interface Source {
-	id: string;
-	position: SourcePosition;
-	index: number;
-	color: RGB;
+	setSourceMap: (key: string, value: number) => void;
+	setTileMap: (key: string, value: number) => void;
+	resetMaps: (targetColor: number[]) => void;
 }

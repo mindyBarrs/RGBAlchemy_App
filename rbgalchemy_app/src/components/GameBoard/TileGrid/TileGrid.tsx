@@ -1,5 +1,28 @@
-import { useGameStore } from "../../../zustard/store";
+import Square from "../../BasicShapes/Square";
 
-const TileGrid = () => {};
+import { TilesGridProps } from "../../../lib/types/component.types";
+
+const TileGrid = ({
+	colId,
+	rowId,
+	color,
+	isClosest,
+	isDraggable,
+}: TilesGridProps) => {
+	const drag = (event: React.DragEvent<HTMLDivElement>) => {
+		event.dataTransfer.setData("text", color ? color?.toString() : "");
+	};
+
+	return (
+		<div
+			draggable={isDraggable}
+			onDragStart={drag}
+			className={"inline-block m-0.5"}
+			style={{ cursor: isDraggable ? "pointer" : "default" }}
+		>
+			<Square color={color ?? []} selected={isClosest} />
+		</div>
+	);
+};
 
 export default TileGrid;
