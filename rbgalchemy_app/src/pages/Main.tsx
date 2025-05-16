@@ -10,7 +10,7 @@ export const Main = () => {
 	const setGameConfig = useGameStore((state) => state.setGameConfig);
 	const { gameConfig } = useGameStore((state) => state);
 
-	const [moveCount, setMoveCount] = useState<number>(0);
+	const [rgbMoveCount, setRGBMoveCount] = useState<number>(0);
 	const [openDialog, setOpenDialog] = useState<boolean>(false);
 	const [reloadGrid, setReloadGrid] = useState<boolean>(false);
 	const [win, setWin] = useState<boolean>(false);
@@ -31,14 +31,14 @@ export const Main = () => {
 	}, [setGameConfig]);
 
 	const handleMovePlus = () => {
-		setMoveCount((moveCount: number) => moveCount + 1);
+		setRGBMoveCount((rgbMoveCount: number) => rgbMoveCount + 1);
 	};
 
 	useEffect(() => {
-		if (gameConfig.maxMoves - moveCount === 0) {
+		if (gameConfig.maxMoves - rgbMoveCount === 0) {
 			setOpenDialog(true);
 		}
-	}, [moveCount]);
+	}, [rgbMoveCount]);
 
 	return (
 		<div>
@@ -51,7 +51,7 @@ export const Main = () => {
 					gridHeight={gameConfig.gameBoardSize.height}
 					gridWidth={gameConfig.gameBoardSize.width}
 					targetColor={gameConfig.targetColor}
-					moveCount={moveCount}
+					rgbMoveCount={rgbMoveCount}
 					reload={false}
 					moveMade={handleMovePlus}
 					onMove={() => console.log("Move made")}

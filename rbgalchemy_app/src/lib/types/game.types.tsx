@@ -1,7 +1,5 @@
 import { SourceProps } from "./component.types";
 
-import { RGB } from "./utils.types";
-
 export interface GameResponse {
 	userId: string;
 	maxMoves: number;
@@ -22,24 +20,24 @@ export interface GameConfig {
 
 export interface GameStore {
 	gameConfig: GameConfig;
-	tiles: number[][];
-	sources: SourceProps[];
 	movesLeft: number;
 	bestColor: number[];
 	bestDelta: number;
-	sourceMap: Map<string, number>;
-	tileMap: Map<string, number>;
 	closestIndex: { rowId: number; colId: number };
 	delta: number;
-	setClosestIndex: (
-		rowId: number,
-		colId: number,
-		tileColor: number[],
-		targetColor: number[]
-	) => void;
+	tileMap: Map<string, number[]>;
+	setClosestIndex: (rowId: number, colId: number) => void;
 	setDelta: (value: number) => void;
 	setGameConfig: (config: GameResponse) => void;
-	setSourceMap: (key: string, value: number) => void;
-	setTileMap: (key: string, value: number) => void;
-	resetMaps: (targetColor: number[]) => void;
+	getSourceColor: (
+		rowId: number,
+		colId: number,
+		sourceMap: Map<string, number[]>
+	) => number[];
+	getTileColor: (
+		rowId: number,
+		colId: number,
+		tileMap: Map<string, number[]>
+	) => number[];
+	setTileMap: (key: string, value: number[]) => void;
 }

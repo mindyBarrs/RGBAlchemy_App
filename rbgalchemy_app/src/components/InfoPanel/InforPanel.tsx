@@ -1,8 +1,14 @@
 import { useGameStore } from "../../zustard/store";
 import Square from "../BasicShapes/Square";
 
+import { COLOR } from "../../lib/constants/colors.constants";
+
 export const InfoPanel = () => {
-	const { gameConfig } = useGameStore((state) => state);
+	const { delta, gameConfig, getTileColor } = useGameStore((state) => state);
+
+	const convertedDelta = () => {
+		return (delta * 100).toFixed(2);
+	};
 
 	return (
 		<div style={{ marginBottom: "1rem" }}>
@@ -12,18 +18,18 @@ export const InfoPanel = () => {
 			</p>
 			<p>Max Moves: {gameConfig.maxMoves}</p>
 
-			{/* <div className="mb-6 h-4">
-				Closest color:
-				<div className="inline relative top-1/2 ml-2">
-					<Square
-						color={
-							getTileColor(closestIndex.rowId, closestIndex.colId) ||
-							COLOR.DEFAULT_BLACK
-						}
-					/>
-				</div>
-				{"Δ=" + convertedDelta() + "%"}
-			</div> */}
+			{/* // <div className="mb-6 h-4">
+			// 	Closest color:
+			// 	<div className="inline relative top-1/2 ml-2">
+			// 		<Square
+			// 			color={
+			// 				getTileColor(closestIndex.rowId, closestIndex.colId) ||
+			// 				COLOR.DEFAULT_BLACK
+			// 			}
+			// 		/>
+			// 	</div>
+			// 	{"Δ=" + convertedDelta() + "%"}
+			// </div> */}
 		</div>
 	);
 };

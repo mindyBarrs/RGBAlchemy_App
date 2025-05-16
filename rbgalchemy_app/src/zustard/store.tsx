@@ -1,10 +1,9 @@
 import { create } from "zustand";
 
 import { GameResponse, GameStore } from "../lib/types/game.types";
-import { RGB } from "../lib/types/utils.types";
-import { COLOR } from "../lib/constants/colors.constants";
 
-const DELTA_CONST = 1; // Define DELTA_CONST with an appropriate value
+import { COLOR } from "../lib/constants/colors.constants";
+import { calculateDelta, getKey } from "../utils/functions.utils";
 
 export const useGameStore = create<GameStore>((set) => ({
 	gameConfig: {
@@ -16,15 +15,12 @@ export const useGameStore = create<GameStore>((set) => ({
 			height: 0,
 		},
 	},
-	tiles: [],
-	sources: [],
 	movesLeft: 0,
 	bestColor: COLOR.DEFAULT_BLACK,
 	bestDelta: 0,
-	sourceMap: new Map<string, number>(),
-	tileMap: new Map<string, number>(),
 	closestIndex: { rowId: 1, colId: 1 },
 	delta: calculateDelta(COLOR.DEFAULT_BLACK, COLOR.DEFAULT_BLACK),
+	tileMap: new Map<string, number[]>(),
 
 	setGameConfig: (config: GameResponse) => {
 		set({
@@ -37,71 +33,45 @@ export const useGameStore = create<GameStore>((set) => ({
 				targetColor: config.target,
 				maxMoves: config.maxMoves,
 			},
-			tiles: Array(config.height)
-				.fill(null)
-				.map(() => Array(config.width).fill([COLOR.DEFAULT_BLACK])),
 			movesLeft: config.maxMoves,
 			bestColor: config.target,
 			bestDelta: 0,
 		});
 	},
 
-	setSourceMap: (key: string, value: number) => {
-		const sourceMap = new Map<string, number>(get().sourceMap);
-		sourceMap.set(key, value);
-		set({ sourceMap });
-	},
-
-	setTileMap: (key: string, value: number) => {
-		const tileMap = new Map<string, number>(get().tileMap);
-		tileMap.set(key, value);
-		set({ tileMap });
-	},
-
-	resetMaps: (targetColor: number[]) => {
+	setClosestIndex: (rowId: number, colId: number) => {
 		set({
-			sourceMap: new Map(),
-			tileMap: new Map(),
-			closestIndex: { rowId: 1, colId: 1 },
-			delta: calculateDelta(targetColor, COLOR.DEFAULT_BLACK),
+			closestIndex: { rowId, colId },
 		});
 	},
 
-	setClosestIndex: (
+	setDelta: (d: number) => set({ delta: d }),
+
+	getSourceColor: (
 		rowId: number,
 		colId: number,
-		tileColor: number[],
-		targetColor: number[]
+		sourceMap: Map<string, number[]>
 	) => {
-		const { closestIndex } = get();
-		const oldColor =
-			get().tileMap.get(`${closestIndex.rowId}|${closestIndex.colId}`) ||
-			COLOR.DEFAULT_BLACK;
-
-		if (rowId === closestIndex.rowId && colId === closestIndex.colId) return;
-
-		const newDelta = calculateDelta(targetColor, tileColor);
-		const oldDelta = calculateDelta(targetColor, oldColor);
-
-		if (newDelta < oldDelta) {
-			set({ closestIndex: { rowId, colId }, delta: newDelta });
-		}
+		let mapKey = getKey(rowId, colId);
+		const color = sourceMap.get(mapKey);
+		return color !== undefined ? color : COLOR.DEFAULT_BLACK;
 	},
 
-	setDelta: (d: number) => set({ delta: d }),
+	getTileColor: (
+		rowId: number,
+		colId: number,
+		tileMap: Map<string, number[]>
+	) => {
+		let mapKey = getKey(rowId, colId);
+		const color = tileMap.get(mapKey);
+		return color !== undefined ? color : COLOR.DEFAULT_BLACK;
+	},
+
+	setTileMap: (key: string, value: number[]) => {
+		set((state) => {
+			const newTileMap = new Map<string, number[]>(state.tileMap);
+			newTileMap.set(key, value);
+			return { tileMap: newTileMap };
+		});
+	},
 }));
-
-function get() {
-	return useGameStore.getState();
-}
-
-function calculateDelta(target: number[], obtained: number[]): number {
-	return (
-		DELTA_CONST *
-		Math.sqrt(
-			(target[0] - obtained[0]) ** 2 +
-				(target[1] - obtained[1]) ** 2 +
-				(target[2] - obtained[2]) ** 2
-		)
-	);
-}

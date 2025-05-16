@@ -6,7 +6,7 @@ export interface GameBoardProps {
 	gridHeight: number;
 	gridWidth: number;
 	targetColor: number[];
-	moveCount: number;
+	rgbMoveCount: number;
 	reload: boolean;
 	moveMade?: () => void;
 	reloaded?: () => void;

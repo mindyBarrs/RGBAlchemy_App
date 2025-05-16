@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 
-import Square from "../BasicShapes/Square";
 import TileGrid from "./TileGrid/TileGrid";
 import Source from "./Source/Source";
 
 import { GameBoardProps } from "../../lib/types/component.types";
 import { COLOR } from "../../lib/constants/colors.constants";
-import { DELTA_CONST } from "../../lib/constants/utils.constants";
-import { GridCoordinates } from "../../lib/types/utils.types";
+
+import { getKey, calculateDelta } from "../../utils/functions.utils";
 
 import { useGameStore } from "../../zustard/store";
 
@@ -17,49 +16,35 @@ export const GameBoard = ({
 	gridHeight,
 	gridWidth,
 	targetColor,
-	moveCount,
+	rgbMoveCount,
 	reload,
 	moveMade,
 	reloaded,
 	win,
 }: GameBoardProps) => {
+	const {
+		closestIndex,
+		delta,
+		tileMap,
+		setDelta,
+		setClosestIndex,
+		getSourceColor,
+		getTileColor,
+		setTileMap,
+	} = useGameStore();
+
 	const [sourceMap, setSourceMap] = useState<Map<string, number[]>>(new Map());
-	const [tileMap, setTileMap] = useState<Map<string, number[]>>(new Map());
-	const [closestIndex, setClosestIndex] = useState<GridCoordinates>({
-		rowId: 1,
-		colId: 1,
-	});
 
 	// Reset when reload is true
 	useEffect(() => {
-		setSourceMap(new Map());
-		setTileMap(new Map());
-		setClosestIndex({ rowId: 1, colId: 1 });
+		setSourceMap(new Map<string, number[]>());
+		setClosestIndex(1, 1);
 		setDelta(calculateDelta(targetColor, COLOR.DEFAULT_BLACK));
 		reloaded?.();
 	}, [reload, targetColor]);
 
-	const allowTileDrop = moveCount > 2;
-	const sourceClickable = moveCount < 2;
-
-	const calculateDelta = (target: number[], obtained: number[]) => {
-		return (
-			DELTA_CONST *
-			Math.sqrt(
-				(target[0] - obtained[0]) ** 2 +
-					(target[1] - obtained[1]) ** 2 +
-					(target[2] - obtained[2]) ** 2
-			)
-		);
-	};
-
-	const [delta, setDelta] = useState<number>(
-		calculateDelta(targetColor, COLOR.DEFAULT_BLACK)
-	);
-
-	const convertedDelta = () => {
-		return (delta * 100).toFixed(2);
-	};
+	const allowTileDrop = rgbMoveCount > 2;
+	const sourceClickable = rgbMoveCount < 2;
 
 	/* 
   updateFunctions trigger a rerender, new Map must be created so the pointer changes
@@ -70,7 +55,7 @@ export const GameBoard = ({
 	};
 
 	const updateTileMap = (k: string, v: number[]) => {
-		setTileMap(new Map(tileMap.set(k, v)));
+		setTileMap(k, v);
 	};
 
 	const verifyClosest = (tileColor: number[], rowId: number, colId: number) => {
@@ -78,11 +63,15 @@ export const GameBoard = ({
 			return;
 		}
 		const newDelta = calculateDelta(targetColor, tileColor);
-		let closestColor = getTileColor(closestIndex.rowId, closestIndex.colId);
+		let closestColor = getTileColor(
+			closestIndex.rowId,
+			closestIndex.colId,
+			tileMap
+		);
 		if (closestColor) {
 			const oldDelta = calculateDelta(targetColor, closestColor);
 			if (newDelta < oldDelta) {
-				setClosestIndex({ rowId: rowId, colId: colId });
+				setClosestIndex(rowId, colId);
 				setDelta(newDelta);
 			}
 		}
@@ -103,17 +92,13 @@ export const GameBoard = ({
 					key={"tile-" + rowId + "-" + i}
 					rowId={rowId}
 					colId={i}
-					color={getTileColor(rowId, i)}
+					color={getTileColor(rowId, i, tileMap)}
 					isDraggable={allowTileDrop}
 					isClosest={closestIndex.rowId === rowId && closestIndex.colId === i}
 				/>
 			);
 		}
 		return gridElements;
-	};
-
-	const getKey = (rowId: number, colId: number) => {
-		return rowId.toString() + "|" + colId.toString();
 	};
 
 	// update Map of corresponding source, with  color
@@ -123,15 +108,6 @@ export const GameBoard = ({
 		updateSourceShinedTiles(rowId, colId);
 	};
 
-	const getSourceColor = (rowId: number, colId: number) => {
-		let mapKey = getKey(rowId, colId);
-		return sourceMap.get(mapKey) ? sourceMap.get(mapKey) : COLOR.DEFAULT_BLACK;
-	};
-
-	const getTileColor = (rowId: number, colId: number) => {
-		let mapKey = getKey(rowId, colId);
-		return tileMap.get(mapKey) ? tileMap.get(mapKey) : COLOR.DEFAULT_BLACK;
-	};
 	/* set Tile color based on all of it's shined sources */
 	const setTileColor = (rowId: number, colId: number) => {
 		let shineColors = [];
@@ -164,7 +140,7 @@ export const GameBoard = ({
 				distance = Math.abs(source.rowId - rowId);
 				ratio = (gridHeight - distance + 1) / (gridHeight + 1);
 			}
-			let sourceColor = getSourceColor(source.rowId, source.colId);
+			let sourceColor = getSourceColor(source.rowId, source.colId, sourceMap);
 			if (sourceColor) {
 				shineColor = [
 					sourceColor[0] * ratio,
@@ -206,7 +182,8 @@ export const GameBoard = ({
 	};
 
 	const sourceClick = (rowId: number, colId: number): void => {
-		switch (moveCount) {
+		console.log("sourceClick", rgbMoveCount, sourceClickable);
+		switch (rgbMoveCount) {
 			case 0:
 				// set to red
 				fillSource(rowId, colId, COLOR.RED);
@@ -224,12 +201,11 @@ export const GameBoard = ({
 				break;
 
 			default:
-			// code block
-			// props.handleMoveMade();
 		}
 	};
 
 	const sourceDrop = (color: number[], rowId: number, colId: number) => {
+		console.log("hey");
 		fillSource(rowId, colId, color);
 		moveMade?.();
 	};
@@ -243,7 +219,7 @@ export const GameBoard = ({
 					rowId={rowId}
 					colId={i}
 					handleSourceClick={sourceClick}
-					color={getSourceColor(rowId, i)}
+					color={getSourceColor(rowId, i, sourceMap)}
 					handleSourceDrop={sourceDrop}
 					isClickable={sourceClickable}
 				/>
@@ -256,12 +232,12 @@ export const GameBoard = ({
 		const gridElements = [];
 		for (let i = 1; i < gridHeight; i++) {
 			gridElements.push(
-				<div>
+				<div key={i}>
 					<Source
 						rowId={i}
 						colId={0}
 						handleSourceClick={sourceClick}
-						color={getSourceColor(i, 0)}
+						color={getSourceColor(i, 0, sourceMap)}
 						handleSourceDrop={sourceDrop}
 						isClickable={sourceClickable}
 					/>
@@ -270,7 +246,7 @@ export const GameBoard = ({
 						rowId={i}
 						colId={gridWidth}
 						handleSourceClick={sourceClick}
-						color={getSourceColor(i, gridWidth)}
+						color={getSourceColor(i, gridWidth, sourceMap)}
 						handleSourceDrop={sourceDrop}
 						isClickable={sourceClickable}
 					/>
