@@ -74,8 +74,7 @@ export const GameBoard = ({
 	};
 
 	useEffect(() => {
-		console.log("You win!", delta);
-		if (delta < 0.1 && delta < 0) {
+		if (delta < 0.1 && delta > 0) {
 			win();
 		}
 	}, [delta]);

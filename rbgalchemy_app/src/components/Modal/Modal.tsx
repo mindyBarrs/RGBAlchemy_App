@@ -35,27 +35,18 @@ const Modal: React.FC<ModalProps> = ({ isOpen, win, onClose, onReload }) => {
 			<div className="modal-wrapper">
 				<div className="modal-container" ref={targetRef}>
 					<div className="modal-header">
+						{win ? <h2>Congratulations!</h2> : <h2>Game Over</h2>}
 						<button onClick={onClose}>X</button>
 					</div>
 
 					<div className="modal-body">
-						{!win && (
-							<>
-								<h2>Game Over</h2>
-								<p>Would you like to play again?</p>
-
-								<button onClick={onReload}>Play Again</button>
-							</>
+						{!win ? (
+							<p>Would you like to play again?</p>
+						) : (
+							<p>You have completed the game!</p>
 						)}
 
-						{win && (
-							<>
-								<h2>Congratulations!</h2>
-								<p>You have completed the game!</p>
-
-								<button onClick={onReload}>Play Again</button>
-							</>
-						)}
+						<button onClick={onReload}>Play Again</button>
 					</div>
 				</div>
 			</div>
