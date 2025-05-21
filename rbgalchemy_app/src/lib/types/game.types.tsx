@@ -10,7 +10,6 @@ export interface GameResponse {
 
 export interface GameConfig {
 	userId: string;
-	maxMoves: number;
 	targetColor: number[];
 	gameBoardSize: {
 		width: number;
@@ -39,4 +38,5 @@ export interface GameStore {
 	) => number[];
 	getTileColor: (rowId: number, colId: number) => number[];
 	setTileMap: (key: string, value: number[]) => void;
+	updateMaxMoves: (moves: number) => void;
 }

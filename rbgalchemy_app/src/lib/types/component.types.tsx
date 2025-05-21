@@ -9,7 +9,7 @@ export interface GameBoardProps {
 	rgbMoveCount: number;
 	reload: boolean;
 	moveMade: () => void;
-	win?: () => void;
+	win: () => void;
 }
 
 export interface ModalProps {
@@ -34,8 +34,6 @@ export interface SourceProps {
 }
 
 export interface TilesGridProps {
-	colId: number;
-	rowId: number;
 	color?: number[];
 	isClosest: boolean;
 	isDraggable: boolean;

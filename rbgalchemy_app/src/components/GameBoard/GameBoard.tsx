@@ -19,18 +19,19 @@ export const GameBoard = ({
 	rgbMoveCount,
 	reload,
 	moveMade,
-	reloaded,
 	win,
 }: GameBoardProps) => {
 	const {
 		closestIndex,
 		delta,
 		tileMap,
+		movesLeft,
 		setDelta,
 		setClosestIndex,
 		getSourceColor,
 		getTileColor,
 		setTileMap,
+		updateMaxMoves,
 	} = useGameStore();
 
 	const [sourceMap, setSourceMap] = useState<Map<string, number[]>>(new Map());
@@ -40,21 +41,19 @@ export const GameBoard = ({
 		setSourceMap(new Map<string, number[]>());
 		setClosestIndex(1, 1);
 		setDelta(calculateDelta(targetColor, COLOR.DEFAULT_BLACK));
-		reloaded?.();
 	}, [reload, targetColor]);
 
 	const allowTileDrop = rgbMoveCount > 2;
 	const sourceClickable = rgbMoveCount < 2;
 
-	/* 
-  updateFunctions trigger a rerender, new Map must be created so the pointer changes
-  could also use immutable.js(library) instead? 
-  */
 	const updateSourceMap = (k: string, v: number[]) => {
 		setSourceMap(new Map(sourceMap.set(k, v)));
 	};
 
 	const updateTileMap = (k: string, v: number[]) => {
+		const newMap = new Map(tileMap);
+		newMap.set(k, v);
+
 		setTileMap(k, v);
 	};
 
@@ -64,6 +63,7 @@ export const GameBoard = ({
 		}
 		const newDelta = calculateDelta(targetColor, tileColor);
 		let closestColor = getTileColor(closestIndex.rowId, closestIndex.colId);
+
 		if (closestColor) {
 			const oldDelta = calculateDelta(targetColor, closestColor);
 			if (newDelta < oldDelta) {
@@ -73,10 +73,10 @@ export const GameBoard = ({
 		}
 	};
 
-	//Set Win Condition
 	useEffect(() => {
-		if (delta < 0.1) {
-			win?.();
+		console.log("You win!", delta);
+		if (delta < 0.1 && delta < 0) {
+			win();
 		}
 	}, [delta]);
 
@@ -86,8 +86,6 @@ export const GameBoard = ({
 			gridElements.push(
 				<TileGrid
 					key={"tile-" + rowId + "-" + i}
-					rowId={rowId}
-					colId={i}
 					color={getTileColor(rowId, i)}
 					isDraggable={allowTileDrop}
 					isClosest={closestIndex.rowId === rowId && closestIndex.colId === i}
@@ -100,6 +98,7 @@ export const GameBoard = ({
 	// update Map of corresponding source, with  color
 	const fillSource = (rowId: number, colId: number, color: number[]) => {
 		let mapKey = getKey(rowId, colId);
+
 		updateSourceMap(mapKey, color);
 		updateSourceShinedTiles(rowId, colId);
 	};
@@ -132,7 +131,6 @@ export const GameBoard = ({
 				distance = Math.abs(source.colId - colId);
 				ratio = (gridWidth - distance + 1) / (gridWidth + 1);
 			} else {
-				// (source.colId == colId)
 				distance = Math.abs(source.rowId - rowId);
 				ratio = (gridHeight - distance + 1) / (gridHeight + 1);
 			}
@@ -160,6 +158,7 @@ export const GameBoard = ({
 	) => {
 		let newColor: number[];
 		let mapKey: string;
+
 		if (sourceRowId === 0 || sourceRowId === gridHeight) {
 			for (let i = 1; i < gridHeight; i++) {
 				newColor = setTileColor(i, sourceColId);
@@ -178,22 +177,23 @@ export const GameBoard = ({
 	};
 
 	const sourceClick = (rowId: number, colId: number): void => {
-		console.log("sourceClick", rgbMoveCount, sourceClickable);
+		updateMaxMoves(movesLeft - 1);
+
 		switch (rgbMoveCount) {
 			case 0:
 				// set to red
 				fillSource(rowId, colId, COLOR.RED);
-				moveMade?.();
+				moveMade();
 				break;
 			case 1:
 				// set to green
 				fillSource(rowId, colId, COLOR.GREEN);
-				moveMade?.();
+				moveMade();
 				break;
 			case 2:
 				// set to blue
 				fillSource(rowId, colId, COLOR.BLUE);
-				moveMade?.();
+				moveMade();
 				break;
 
 			default:
@@ -201,9 +201,8 @@ export const GameBoard = ({
 	};
 
 	const sourceDrop = (color: number[], rowId: number, colId: number) => {
-		console.log("hey");
 		fillSource(rowId, colId, color);
-		moveMade?.();
+		updateMaxMoves(movesLeft - 1);
 	};
 
 	const createSourceRow = (rowId: number) => {

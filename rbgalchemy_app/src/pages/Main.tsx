@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { InfoPanel } from "../components/InfoPanel/InfoPanel";
 import GameBoard from "../components/GameBoard/GameBoard";
+import InfoPanel from "../components/InfoPanel/InfoPanel";
 import Modal from "../components/Modal";
 
 import { initializeGame } from "../api/api";
@@ -17,17 +17,6 @@ export const Main = () => {
 	const [win, setWin] = useState<boolean>(false);
 
 	useEffect(() => {
-		// Fetch game configuration from API
-		const fetchGameConfig = async () => {
-			try {
-				const response = await initializeGame();
-
-				setGameConfig(response);
-			} catch (error) {
-				console.error("Error fetching game config:", error);
-			}
-		};
-
 		fetchGameConfig();
 	}, []);
 
@@ -39,13 +28,36 @@ export const Main = () => {
 		if (movesLeft === 0 && rgbMoveCount === 3) {
 			setOpenDialog(true);
 		}
-	}, [movesLeft]);
+	}, [movesLeft, rgbMoveCount]);
+
+	// Fetch game configuration from API
+	const fetchGameConfig = async () => {
+		try {
+			const response = await initializeGame();
+
+			setGameConfig(response);
+		} catch (error) {
+			console.error("Error fetching game config:", error);
+		}
+	};
+
+	const handleReload = () => {
+		setOpenDialog(false);
+		setReloadGrid(true);
+		setRGBMoveCount(0);
+		setWin(false);
+	};
+
+	const handleWin = () => {
+		setOpenDialog(true);
+		setWin(true);
+	};
 
 	return (
 		<div>
 			<h1>RGB Alchemy Game</h1>
 
-			<div>
+			<div className="game-container">
 				<InfoPanel />
 
 				<GameBoard
@@ -55,6 +67,7 @@ export const Main = () => {
 					rgbMoveCount={rgbMoveCount}
 					reload={reloadGrid}
 					moveMade={handleMovePlus}
+					win={handleWin}
 				/>
 
 				{openDialog && (
@@ -66,12 +79,7 @@ export const Main = () => {
 							setReloadGrid(true);
 							setRGBMoveCount(0);
 						}}
-						onReload={() => {
-							setOpenDialog(false);
-							setReloadGrid(true);
-							setRGBMoveCount(0);
-							setWin(false);
-						}}
+						onReload={handleReload}
 					/>
 				)}
 			</div>

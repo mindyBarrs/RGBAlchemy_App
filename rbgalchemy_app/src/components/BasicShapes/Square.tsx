@@ -2,7 +2,7 @@ import { SquareProps } from "../../lib/types/component.types";
 
 export const Square = ({ color, selected }: SquareProps) => {
 	return (
-		<svg width="100" height="100">
+		<svg width="50" height="50">
 			<rect
 				x="10"
 				y="10"

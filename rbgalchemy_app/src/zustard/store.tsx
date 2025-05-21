@@ -13,7 +13,6 @@ export const useGameStore = create<GameStore>()(
 	immer((set) => ({
 		gameConfig: {
 			userId: "",
-			maxMoves: 0,
 			targetColor: COLOR.DEFAULT_BLACK,
 			gameBoardSize: {
 				width: 0,
@@ -25,7 +24,6 @@ export const useGameStore = create<GameStore>()(
 		bestDelta: 0,
 		closestIndex: { rowId: 1, colId: 1 },
 		delta: calculateDelta(COLOR.DEFAULT_BLACK, COLOR.DEFAULT_BLACK),
-		// sourceMap: new Map(),
 		tileMap: new Map(),
 
 		setGameConfig: (config: GameResponse) => {
@@ -37,7 +35,6 @@ export const useGameStore = create<GameStore>()(
 						height: config.height,
 					},
 					targetColor: config.target,
-					maxMoves: config.maxMoves,
 				},
 				movesLeft: config.maxMoves,
 				bestColor: config.target,
@@ -61,25 +58,27 @@ export const useGameStore = create<GameStore>()(
 			let mapKey = getKey(rowId, colId);
 			// const state: GameStore = useGameStore.getState();
 			const color = sourceMap.get(mapKey);
+
 			return color !== undefined ? color : COLOR.DEFAULT_BLACK;
 		},
-
-		// setSourceMap: (key: string, value: number[]) => {
-		// 	set((state) => {
-		// 		state.sourceMap.set(key, value);
-		// 	});
-		// },
 
 		getTileColor: (rowId: number, colId: number) => {
 			let mapKey = getKey(rowId, colId);
 			const state: GameStore = useGameStore.getState();
 			const color = state.tileMap.get(mapKey);
+
 			return color !== undefined ? color : COLOR.DEFAULT_BLACK;
 		},
 
 		setTileMap: (key: string, value: number[]) => {
 			set((state) => {
 				state.tileMap.set(key, value);
+			});
+		},
+
+		updateMaxMoves: (moves: number) => {
+			set((state) => {
+				state.movesLeft = moves;
 			});
 		},
 	}))

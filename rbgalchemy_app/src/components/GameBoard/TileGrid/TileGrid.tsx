@@ -2,13 +2,7 @@ import Square from "../../BasicShapes/Square";
 
 import { TilesGridProps } from "../../../lib/types/component.types";
 
-const TileGrid = ({
-	colId,
-	rowId,
-	color,
-	isClosest,
-	isDraggable,
-}: TilesGridProps) => {
+const TileGrid = ({ color, isClosest, isDraggable }: TilesGridProps) => {
 	const drag = (event: React.DragEvent<HTMLDivElement>) => {
 		event.dataTransfer.setData("text", color ? color?.toString() : "");
 	};
