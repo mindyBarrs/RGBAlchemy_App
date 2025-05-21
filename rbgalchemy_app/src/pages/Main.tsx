@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 
-import { InfoPanel } from "../components/InfoPanel/InforPanel";
+import { InfoPanel } from "../components/InfoPanel/InfoPanel";
+import GameBoard from "../components/GameBoard/GameBoard";
+import Modal from "../components/Modal";
 
 import { initializeGame } from "../api/api";
 import { useGameStore } from "../zustard/store";
-import { GameBoard } from "../components/GameBoard/GameBoard";
 
 export const Main = () => {
 	const setGameConfig = useGameStore((state) => state.setGameConfig);
-	const { gameConfig } = useGameStore((state) => state);
+	const { gameConfig, movesLeft } = useGameStore((state) => state);
 
 	const [rgbMoveCount, setRGBMoveCount] = useState<number>(0);
 	const [openDialog, setOpenDialog] = useState<boolean>(false);
@@ -28,17 +29,17 @@ export const Main = () => {
 		};
 
 		fetchGameConfig();
-	}, [setGameConfig]);
+	}, []);
 
 	const handleMovePlus = () => {
 		setRGBMoveCount((rgbMoveCount: number) => rgbMoveCount + 1);
 	};
 
 	useEffect(() => {
-		if (gameConfig.maxMoves - rgbMoveCount === 0) {
+		if (movesLeft === 0 && rgbMoveCount === 3) {
 			setOpenDialog(true);
 		}
-	}, [rgbMoveCount]);
+	}, [movesLeft]);
 
 	return (
 		<div>
@@ -52,11 +53,27 @@ export const Main = () => {
 					gridWidth={gameConfig.gameBoardSize.width}
 					targetColor={gameConfig.targetColor}
 					rgbMoveCount={rgbMoveCount}
-					reload={false}
+					reload={reloadGrid}
 					moveMade={handleMovePlus}
-					onMove={() => console.log("Move made")}
-					onGameEnd={() => console.log("Game ended")}
 				/>
+
+				{openDialog && (
+					<Modal
+						win={win}
+						isOpen={openDialog}
+						onClose={() => {
+							setOpenDialog(false);
+							setReloadGrid(true);
+							setRGBMoveCount(0);
+						}}
+						onReload={() => {
+							setOpenDialog(false);
+							setReloadGrid(true);
+							setRGBMoveCount(0);
+							setWin(false);
+						}}
+					/>
+				)}
 			</div>
 		</div>
 	);

@@ -4,9 +4,8 @@ import Square from "../BasicShapes/Square";
 import { COLOR } from "../../lib/constants/colors.constants";
 
 export const InfoPanel = () => {
-	const { closestIndex, delta, gameConfig, getTileColor } = useGameStore(
-		(state) => state
-	);
+	const { closestIndex, delta, gameConfig, movesLeft, getTileColor } =
+		useGameStore((state) => state);
 
 	const convertedDelta = () => {
 		return (delta * 100).toFixed(2);
@@ -18,7 +17,7 @@ export const InfoPanel = () => {
 			<p>
 				Target Color: <Square color={gameConfig.targetColor} />
 			</p>
-			<p>Max Moves: {gameConfig.maxMoves}</p>
+			<p>Max Moves: {movesLeft}</p>
 
 			<div className="mb-6 h-4">
 				Closest color:

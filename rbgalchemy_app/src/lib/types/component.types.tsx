@@ -8,11 +8,15 @@ export interface GameBoardProps {
 	targetColor: number[];
 	rgbMoveCount: number;
 	reload: boolean;
-	moveMade?: () => void;
-	reloaded?: () => void;
+	moveMade: () => void;
 	win?: () => void;
-	onMove: (rowId: number, colId: number) => void;
-	onGameEnd: () => void;
+}
+
+export interface ModalProps {
+	isOpen: boolean;
+	onClose: () => void;
+	onReload: () => void;
+	win?: boolean;
 }
 
 export interface SquareProps {
