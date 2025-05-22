@@ -13,23 +13,32 @@ export const InfoPanel = () => {
 
 	return (
 		<div style={{ marginBottom: "1rem" }}>
-			<p>User ID: {gameConfig.userId}</p>
 			<p>
-				Target Color: <Square color={gameConfig.targetColor} />
+				<span className="strong">User ID:</span> {gameConfig.userId}
 			</p>
-			<p>Max Moves: {movesLeft}</p>
+			<p className="target-color">
+				<span className="strong">Target Color: </span>
 
-			<div className="mb-6 h-4">
-				Closest color:
-				<div className="inline relative top-1/2 ml-2">
+				<div style={{ marginLeft: "5px" }}>
+					<Square color={gameConfig.targetColor} />
+				</div>
+			</p>
+			<p>
+				<span className="strong">Max Moves:</span> {movesLeft}
+			</p>
+
+			<div className="closest-color">
+				<span className="strong">Closest color:</span>
+				<div className="flex-column">
 					<Square
 						color={
 							getTileColor(closestIndex.rowId, closestIndex.colId) ||
 							COLOR.DEFAULT_BLACK
 						}
 					/>
+
+					{"Δ=" + convertedDelta() + "%"}
 				</div>
-				{"Δ=" + convertedDelta() + "%"}
 			</div>
 		</div>
 	);

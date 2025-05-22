@@ -54,7 +54,7 @@ export const Main = () => {
 	};
 
 	return (
-		<div>
+		<>
 			<h1>RGB Alchemy Game</h1>
 
 			<div className="game-container">
@@ -83,6 +83,6 @@ export const Main = () => {
 					/>
 				)}
 			</div>
-		</div>
+		</>
 	);
 };
