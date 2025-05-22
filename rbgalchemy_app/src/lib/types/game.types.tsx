@@ -24,19 +24,19 @@ export interface GameStore {
 	bestDelta: number;
 	closestIndex: { rowId: number; colId: number };
 	delta: number;
-	tileMap: Map<string, number[]>;
-	// sourceMap: Map<string, number[]>;
 
 	setClosestIndex: (rowId: number, colId: number) => void;
 	setDelta: (value: number) => void;
 	setGameConfig: (config: GameResponse) => void;
-	// setSourceMap: (key: string, value: number[]) => void;
 	getSourceColor: (
 		rowId: number,
 		colId: number,
 		sourceMap: Map<string, number[]>
 	) => number[];
-	getTileColor: (rowId: number, colId: number) => number[];
-	setTileMap: (key: string, value: number[]) => void;
+	getTileColor: (
+		rowId: number,
+		colId: number,
+		tileMap: Map<string, number[]>
+	) => number[];
 	updateMaxMoves: (moves: number) => void;
 }

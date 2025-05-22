@@ -24,7 +24,6 @@ export const useGameStore = create<GameStore>()(
 		bestDelta: 0,
 		closestIndex: { rowId: 1, colId: 1 },
 		delta: calculateDelta(COLOR.DEFAULT_BLACK, COLOR.DEFAULT_BLACK),
-		tileMap: new Map(),
 
 		setGameConfig: (config: GameResponse) => {
 			set({
@@ -56,24 +55,20 @@ export const useGameStore = create<GameStore>()(
 			sourceMap: Map<string, number[]>
 		) => {
 			let mapKey = getKey(rowId, colId);
-			// const state: GameStore = useGameStore.getState();
 			const color = sourceMap.get(mapKey);
 
 			return color !== undefined ? color : COLOR.DEFAULT_BLACK;
 		},
 
-		getTileColor: (rowId: number, colId: number) => {
+		getTileColor: (
+			rowId: number,
+			colId: number,
+			tileMap: Map<string, number[]>
+		) => {
 			let mapKey = getKey(rowId, colId);
-			const state: GameStore = useGameStore.getState();
-			const color = state.tileMap.get(mapKey);
+			const color = tileMap.get(mapKey);
 
 			return color !== undefined ? color : COLOR.DEFAULT_BLACK;
-		},
-
-		setTileMap: (key: string, value: number[]) => {
-			set((state) => {
-				state.tileMap.set(key, value);
-			});
 		},
 
 		updateMaxMoves: (moves: number) => {

@@ -6,10 +6,16 @@ export interface GameBoardProps {
 	gridHeight: number;
 	gridWidth: number;
 	targetColor: number[];
+	tileMap: Map<string, number[]>;
 	rgbMoveCount: number;
 	reload: boolean;
 	moveMade: () => void;
 	win: () => void;
+	setTileMap: (tileMap: Map<string, number[]>) => void;
+}
+
+export interface InfoPanelProps {
+	tileMap: Map<string, number[]>;
 }
 
 export interface ModalProps {

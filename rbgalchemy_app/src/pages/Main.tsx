@@ -16,6 +16,8 @@ export const Main = () => {
 	const [reloadGrid, setReloadGrid] = useState<boolean>(false);
 	const [win, setWin] = useState<boolean>(false);
 
+	const [tileMap, setTileMap] = useState<Map<string, number[]>>(new Map());
+
 	useEffect(() => {
 		fetchGameConfig();
 	}, []);
@@ -61,7 +63,7 @@ export const Main = () => {
 			<h1>RGB Alchemy Game</h1>
 
 			<div className="game-container">
-				<InfoPanel />
+				<InfoPanel tileMap={tileMap} />
 
 				<GameBoard
 					gridHeight={gameConfig.gameBoardSize.height}
@@ -69,8 +71,10 @@ export const Main = () => {
 					targetColor={gameConfig.targetColor}
 					rgbMoveCount={rgbMoveCount}
 					reload={reloadGrid}
+					tileMap={tileMap}
 					moveMade={handleMovePlus}
 					win={handleWin}
+					setTileMap={setTileMap}
 				/>
 
 				{openDialog && (

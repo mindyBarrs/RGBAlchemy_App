@@ -2,8 +2,9 @@ import { useGameStore } from "../../zustard/store";
 import Square from "../BasicShapes/Square";
 
 import { COLOR } from "../../lib/constants/colors.constants";
+import { InfoPanelProps } from "../../lib/types/component.types";
 
-export const InfoPanel = () => {
+export const InfoPanel = ({ tileMap }: InfoPanelProps) => {
 	const { closestIndex, delta, gameConfig, movesLeft, getTileColor } =
 		useGameStore((state) => state);
 
@@ -37,7 +38,7 @@ export const InfoPanel = () => {
 					<div className="flex-column" style={{ alignItems: "end" }}>
 						<Square
 							color={
-								getTileColor(closestIndex.rowId, closestIndex.colId) ||
+								getTileColor(closestIndex.rowId, closestIndex.colId, tileMap) ||
 								COLOR.DEFAULT_BLACK
 							}
 						/>

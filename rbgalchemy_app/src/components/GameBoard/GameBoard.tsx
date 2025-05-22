@@ -17,6 +17,8 @@ export const GameBoard = ({
 	gridWidth,
 	targetColor,
 	rgbMoveCount,
+	tileMap,
+	setTileMap,
 	reload,
 	moveMade,
 	win,
@@ -24,13 +26,11 @@ export const GameBoard = ({
 	const {
 		closestIndex,
 		delta,
-		tileMap,
 		movesLeft,
 		setDelta,
 		setClosestIndex,
 		getSourceColor,
 		getTileColor,
-		setTileMap,
 		updateMaxMoves,
 	} = useGameStore();
 
@@ -39,6 +39,7 @@ export const GameBoard = ({
 	// Reset when reload is true
 	useEffect(() => {
 		setSourceMap(new Map<string, number[]>());
+		setTileMap(new Map<string, number[]>());
 		setClosestIndex(1, 1);
 		setDelta(calculateDelta(targetColor, COLOR.DEFAULT_BLACK));
 	}, [reload, targetColor]);
@@ -51,10 +52,7 @@ export const GameBoard = ({
 	};
 
 	const updateTileMap = (k: string, v: number[]) => {
-		const newMap = new Map(tileMap);
-		newMap.set(k, v);
-
-		setTileMap(k, v);
+		setTileMap(new Map(tileMap.set(k, v)));
 	};
 
 	const verifyClosest = (tileColor: number[], rowId: number, colId: number) => {
@@ -62,7 +60,11 @@ export const GameBoard = ({
 			return;
 		}
 		const newDelta = calculateDelta(targetColor, tileColor);
-		let closestColor = getTileColor(closestIndex.rowId, closestIndex.colId);
+		let closestColor = getTileColor(
+			closestIndex.rowId,
+			closestIndex.colId,
+			tileMap
+		);
 
 		if (closestColor) {
 			const oldDelta = calculateDelta(targetColor, closestColor);
@@ -81,11 +83,11 @@ export const GameBoard = ({
 
 	const createTileRow = (rowId: number) => {
 		const gridElements = [];
-		for (let i = 1; i < gridHeight; i++) {
+		for (let i = 1; i < gridWidth; i++) {
 			gridElements.push(
 				<TileGrid
 					key={"tile-" + rowId + "-" + i}
-					color={getTileColor(rowId, i)}
+					color={getTileColor(rowId, i, tileMap)}
 					isDraggable={allowTileDrop}
 					isClosest={closestIndex.rowId === rowId && closestIndex.colId === i}
 				/>
@@ -206,7 +208,7 @@ export const GameBoard = ({
 
 	const createSourceRow = (rowId: number) => {
 		const gridElements = [];
-		for (let i = 1; i < gridHeight; i++) {
+		for (let i = 1; i < gridWidth; i++) {
 			gridElements.push(
 				<Source
 					key={"source" + rowId + "-" + i}
@@ -224,7 +226,7 @@ export const GameBoard = ({
 
 	const createSourceTileRows = () => {
 		const gridElements = [];
-		for (let i = 1; i < gridWidth; i++) {
+		for (let i = 1; i < gridHeight; i++) {
 			gridElements.push(
 				<div key={i}>
 					<Source
