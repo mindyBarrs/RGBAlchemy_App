@@ -81,7 +81,7 @@ export const GameBoard = ({
 
 	const createTileRow = (rowId: number) => {
 		const gridElements = [];
-		for (let i = 1; i < gridWidth; i++) {
+		for (let i = 1; i < gridHeight; i++) {
 			gridElements.push(
 				<TileGrid
 					key={"tile-" + rowId + "-" + i}
@@ -206,7 +206,7 @@ export const GameBoard = ({
 
 	const createSourceRow = (rowId: number) => {
 		const gridElements = [];
-		for (let i = 1; i < gridWidth; i++) {
+		for (let i = 1; i < gridHeight; i++) {
 			gridElements.push(
 				<Source
 					key={"source" + rowId + "-" + i}
@@ -224,7 +224,7 @@ export const GameBoard = ({
 
 	const createSourceTileRows = () => {
 		const gridElements = [];
-		for (let i = 1; i < gridHeight; i++) {
+		for (let i = 1; i < gridWidth; i++) {
 			gridElements.push(
 				<div key={i}>
 					<Source

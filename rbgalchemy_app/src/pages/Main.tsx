@@ -4,7 +4,7 @@ import GameBoard from "../components/GameBoard/GameBoard";
 import InfoPanel from "../components/InfoPanel/InfoPanel";
 import Modal from "../components/Modal";
 
-import { initializeGame } from "../api/api";
+import { initializeGame, newGame } from "../api/api";
 import { useGameStore } from "../zustard/store";
 
 export const Main = () => {
@@ -41,18 +41,21 @@ export const Main = () => {
 		}
 	};
 
-	const handleReload = () => {
+	const handleReload = async () => {
 		setOpenDialog(false);
 		setReloadGrid(true);
 		setRGBMoveCount(0);
 		setWin(false);
+
+		const response = await newGame(gameConfig.userId);
+		setGameConfig(response);
 	};
 
 	const handleWin = () => {
 		setOpenDialog(true);
 		setWin(true);
 	};
-
+	console.log(gameConfig.gameBoardSize.height, gameConfig.gameBoardSize.width);
 	return (
 		<>
 			<h1>RGB Alchemy Game</h1>
