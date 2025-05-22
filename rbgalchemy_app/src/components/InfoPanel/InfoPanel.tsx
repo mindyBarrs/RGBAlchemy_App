@@ -12,32 +12,38 @@ export const InfoPanel = () => {
 	};
 
 	return (
-		<div style={{ marginBottom: "1rem" }}>
-			<p>
-				<span className="strong">User ID:</span> {gameConfig.userId}
-			</p>
-			<p className="target-color">
-				<span className="strong">Target Color: </span>
-
-				<div style={{ marginLeft: "5px" }}>
-					<Square color={gameConfig.targetColor} />
+		<div className="info-panel">
+			<div className="flex-column">
+				<div className="flex-row">
+					<p className="strong">User ID:</p>
+					<p>{gameConfig.userId}</p>
 				</div>
-			</p>
-			<p>
-				<span className="strong">Max Moves:</span> {movesLeft}
-			</p>
 
-			<div className="closest-color">
-				<span className="strong">Closest color:</span>
-				<div className="flex-column">
-					<Square
-						color={
-							getTileColor(closestIndex.rowId, closestIndex.colId) ||
-							COLOR.DEFAULT_BLACK
-						}
-					/>
+				<div className="flex-row">
+					<p className="strong">Target Color: </p>
+					<p>
+						<Square color={gameConfig.targetColor} />
+					</p>
+				</div>
 
-					{"Δ=" + convertedDelta() + "%"}
+				<div className="flex-row">
+					<p className="strong">Max Moves:</p>
+					<p>{movesLeft}</p>
+				</div>
+
+				<div className="flex-row">
+					<p className="strong">Closest color:</p>
+
+					<div className="flex-column" style={{ alignItems: "end" }}>
+						<Square
+							color={
+								getTileColor(closestIndex.rowId, closestIndex.colId) ||
+								COLOR.DEFAULT_BLACK
+							}
+						/>
+
+						{"Δ=" + convertedDelta() + "%"}
+					</div>
 				</div>
 			</div>
 		</div>

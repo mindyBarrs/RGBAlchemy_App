@@ -11,7 +11,6 @@ const TileGrid = ({ color, isClosest, isDraggable }: TilesGridProps) => {
 		<div
 			draggable={isDraggable}
 			onDragStart={drag}
-			className={"inline-block m-0.5"}
 			style={{ cursor: isDraggable ? "pointer" : "default" }}
 		>
 			<Square color={color ?? []} selected={isClosest} />

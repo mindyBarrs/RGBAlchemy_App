@@ -31,7 +31,7 @@ export const initializeGame = async (): Promise<GameResponse> => {
  * @throws {Error} If the request fails or the response is not valid.
  */
 export const newGame = async (userId: string): Promise<GameResponse> => {
-	const response = await axios.post(NEW_GAME_URL, { params: { userId } });
+	const response = await axios.get(`${NEW_GAME_URL}/${userId}`);
 
 	if (response.status < 200 || response.status >= 300) {
 		throw new Error("Failed to create new game");

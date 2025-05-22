@@ -1,6 +1,6 @@
 @import "./variables.css";
 
-.App {
+body {
 	background-color: var(--lite-grey);
 	display: flex;
 	width: 100%;
@@ -14,13 +14,23 @@ h1 {
 	margin: 20px 0;
 }
 
+p {
+	margin: unset;
+}
+
+.App {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
 .game-container {
-	width: 100%;
-	max-width: 1200px;
 	display: flex;
 	flex-direction: row;
-	align-items: baseline;
-	justify-content: space-between;
+	align-items: center;
+	justify-content: center;
+	gap: 125px;
 }
 
 .strong {
@@ -28,8 +38,7 @@ h1 {
 	font-weight: 700;
 }
 
-.target-color,
-.closest-color {
+.info-panel {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
@@ -39,5 +48,10 @@ h1 {
 .flex-column {
 	display: flex;
 	flex-direction: column;
-	align-items: anchor-center;
+}
+
+.flex-row {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
 }
